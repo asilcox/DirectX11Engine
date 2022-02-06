@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "Application.h"
 
 int CALLBACK WinMain(
 	_In_     HINSTANCE hInstance,
@@ -6,11 +6,5 @@ int CALLBACK WinMain(
 	_In_     LPSTR     lpCmdLine,
 	_In_     int       nShowCmd)
 {
-	Window window(1280, 720, "DirectX11 Engine");
-
-	while (true)
-	{
-		if (const auto msgCode = Window::ProcessMessages())
-			return *msgCode;
-	}
+	return Application{}.Run();
 }
