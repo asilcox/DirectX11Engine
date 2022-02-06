@@ -12,4 +12,5 @@ public:
 private:
 	Window window;
 	RenderManager renderManager;
+	float cubeRot = 0.0f;
 };
