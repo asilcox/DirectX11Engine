@@ -3,7 +3,8 @@
 Application::Application()
 	:
 	window(1280, 720, "DirectX Tutorials"),
-	renderManager(window.GetHWND())
+	renderManager(window.GetHWND()),
+	cube(renderManager)
 {}
 
 Application::~Application()
@@ -22,9 +23,7 @@ int Application::Run()
 
 void Application::DrawFrame()
 {
-	cubeRot += 0.01f;
-
 	renderManager.ClearBuffer(0.0f, 0.1f, 0.2f);
-	renderManager.DrawCube(cubeRot);
+	renderManager.DrawIndexedMesh(&cube);
 	renderManager.EndFrame();
 }
