@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <d3dcompiler.h>
-#include <DirectXMath.h>
+#include "EngineMath.h"
 
 class RenderManager
 {
@@ -10,6 +10,7 @@ public:
 	~RenderManager();
 	void EndFrame();
 	void ClearBuffer(float r, float g, float b);
+	void DrawCube(float angle);
 private:
 	ID3D11Device* pDevice = nullptr;
 	IDXGISwapChain* pSwap = nullptr;
