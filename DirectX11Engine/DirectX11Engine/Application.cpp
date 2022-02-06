@@ -2,7 +2,8 @@
 
 Application::Application()
 	:
-	window(1280, 720, "DirectX Tutorials")
+	window(1280, 720, "DirectX Tutorials"),
+	renderManager(window.GetHWND())
 {}
 
 Application::~Application()
@@ -21,5 +22,6 @@ int Application::Run()
 
 void Application::DrawFrame()
 {
-
+	renderManager.ClearBuffer(0.0f, 0.1f, 0.2f);
+	renderManager.EndFrame();
 }

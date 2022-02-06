@@ -8,12 +8,13 @@ public:
 	Window(int width, int height, const char* name);
 	~Window();
 	static std::optional<int> ProcessMessages();
+	HWND GetHWND();
 private:
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 	int width;
 	int height;
 	HWND hWnd;
-	const char* windowName = "DirectX Tutorial";
+	const char* windowName = "DirectX11 Engine";
 	HINSTANCE hInstance;
 };

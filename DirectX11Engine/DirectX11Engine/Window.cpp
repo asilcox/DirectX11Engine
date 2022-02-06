@@ -51,6 +51,11 @@ std::optional<int> Window::ProcessMessages()
 	return {};
 }
 
+HWND Window::GetHWND()
+{
+	return hWnd;
+}
+
 LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)

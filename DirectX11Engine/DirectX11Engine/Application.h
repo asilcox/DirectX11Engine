@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.h"
+#include "RenderManager.h"
 
 class Application
 {
@@ -10,4 +11,5 @@ public:
 	void DrawFrame();
 private:
 	Window window;
+	RenderManager renderManager;
 };
