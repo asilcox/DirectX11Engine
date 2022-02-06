@@ -23,4 +23,3 @@ void Application::DrawFrame()
 {
 
 }
-
