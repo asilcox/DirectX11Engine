@@ -1,4 +1,7 @@
 #include "RenderManager.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "D3DCompiler.lib")
@@ -70,6 +73,13 @@ RenderManager::RenderManager(HWND hWnd)
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	pContext->RSSetViewports(1, &viewport);
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui_ImplWin32_Init(hWnd);
+	ImGui_ImplDX11_Init(pDevice, pContext);
+	ImGui::StyleColorsDark();
 }
 
 RenderManager::~RenderManager()
@@ -79,15 +89,25 @@ RenderManager::~RenderManager()
 	if (pContext) pContext->Release();
 	if (pTarget) pTarget->Release();
 	if (pDepth) pDepth->Release();
+
+	ImGui_ImplWin32_Shutdown();
+	ImGui_ImplDX11_Shutdown();
 }
 
 void RenderManager::EndFrame()
 {
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 	pSwap->Present(1, 0);
 }
 
 void RenderManager::ClearBuffer(float r, float g, float b)
 {
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
 	const float color[] = { r, g, b, 1.0f };
 	pContext->ClearRenderTargetView(pTarget, color);
 	pContext->ClearDepthStencilView(pDepth, D3D11_CLEAR_DEPTH, 1.0f, 0);

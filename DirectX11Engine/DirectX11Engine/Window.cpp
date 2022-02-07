@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "imgui/imgui_impl_win32.h"
 
 Window::Window(int width, int height, const char* name)
 	:
@@ -56,8 +57,12 @@ HWND Window::GetHWND()
 	return hWnd;
 }
 
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		return true;
+
 	switch (msg)
 	{
 	case WM_DESTROY:
