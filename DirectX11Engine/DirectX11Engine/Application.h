@@ -13,5 +13,6 @@ public:
 private:
 	Window window;
 	RenderManager renderManager;
+	Transform t;
 	Cube cube;
 };
