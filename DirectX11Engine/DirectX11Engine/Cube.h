@@ -8,6 +8,10 @@ public:
 		:
 		Mesh(renderManager)
 	{
+		transform.pos = { 0.0f, 0.0f, 5.0f };
+		transform.rot = { 0.0f, 0.0f, 0.0f };
+		transform.scale = { 1.0f, 1.0f, 1.0f };
+
 		vertices =
 		{
 			{ { -1.0f, -1.0f, -1.0f }, { 1.0f, 0.0f, 0.0f } }, // 0
@@ -66,9 +70,11 @@ public:
 		WorldViewProj matrices;
 
 		DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixRotationX(0.5f));
-		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixRotationY(0.5f));
-		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixRotationX(transform.rot.x));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixRotationY(transform.rot.y));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixRotationZ(transform.rot.z));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixTranslation(transform.pos.x, transform.pos.y, transform.pos.z));
 		DirectX::XMStoreFloat4x4(&matrices.wMatrix, world);
 
 		DirectX::XMMATRIX view =
@@ -134,5 +140,40 @@ public:
 		renderManager.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		renderManager.GetContext()->DrawIndexed(indices.size(), 0, 0);
+	}
+
+	void Update(RenderManager& renderManager)
+	{
+		WorldViewProj matrices;
+
+		DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixScaling(transform.scale.x, transform.scale.y, transform.scale.z));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixRotationX(transform.rot.x));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixRotationY(transform.rot.y));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixRotationZ(transform.rot.z));
+		world = DirectX::XMMatrixMultiply(world, DirectX::XMMatrixTranslation(transform.pos.x, transform.pos.y, transform.pos.z));
+		DirectX::XMStoreFloat4x4(&matrices.wMatrix, world);
+
+		DirectX::XMMATRIX view =
+			DirectX::XMMatrixLookAtLH({ 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f });
+		DirectX::XMStoreFloat4x4(&matrices.vMatrix, view);
+
+		DirectX::XMMATRIX projection = DirectX::XMMatrixPerspectiveFovLH(1.0f, 1280.0f / 720.0f, 0.5f, 100.0f);
+		DirectX::XMStoreFloat4x4(&matrices.pMatrix, projection);
+
+		ID3D11Buffer* pConstantBuffer;
+		D3D11_BUFFER_DESC cbd;
+		cbd.ByteWidth = sizeof(matrices);
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
+		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbd.MiscFlags = 0;
+		cbd.StructureByteStride = 0;
+		D3D11_SUBRESOURCE_DATA csd = {};
+		csd.pSysMem = &matrices;
+		renderManager.GetDevice()->CreateBuffer(&cbd, &csd, &pConstantBuffer);
+
+		renderManager.GetContext()->VSSetConstantBuffers(0, 1, &pConstantBuffer);
+		pConstantBuffer->Release();
 	}
 };

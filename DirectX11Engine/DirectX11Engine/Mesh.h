@@ -13,11 +13,16 @@ public:
 	{
 		return indices;
 	}
-	Transform GetTransform()
+	Transform* GetTransform()
 	{
-		return Transform;
+		return &transform;
+	}
+	void SetTransform(Transform& t)
+	{
+		transform = t;
 	}
 protected:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned short> indices;
+	Transform transform;
 };
